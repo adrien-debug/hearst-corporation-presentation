@@ -1,0 +1,16 @@
+node_modules
+.next
+out
+.DS_Store
+*.tsbuildinfo
+next-env.d.ts
+.playwright-mcp/
+
+# Screenshots & artifacts
+*.png
+*.jpeg
+*.jpg
+!public/**/*.png
+!public/**/*.jpg
+!public/**/*.jpeg
+!public/**/*.svg
