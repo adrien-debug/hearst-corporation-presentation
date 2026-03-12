@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Hearst — Brand Book</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --accent: #A7FB90; --accent-light: #C4FDB5; --accent-dark: #73DE56;
+      --accent-muted: rgba(167,251,144,0.15); --accent-subtle: rgba(167,251,144,0.08);
+      --black: #000; --g900: #111; --g800: #1a1a1a; --g700: #2a2a2a;
+      --g600: #3a3a3a; --g500: #7F7F7F; --g400: #B2B2B2; --g300: #D4D4D4;
+      --g200: #E8E8E8; --g100: #F2F2F2; --g50: #FCFDFC; --white: #FFF;
+      --fd: 'Space Grotesk', sans-serif;
+      --fb: 'Inter', sans-serif;
+      --fm: 'JetBrains Mono', monospace;
+      --side: 200px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--fb); background: var(--g100); -webkit-font-smoothing: antialiased; }
+
+    /* ═══ SIDEBAR ═══ */
+    .side { position: fixed; top: 0; left: 0; bottom: 0; width: var(--side); background: var(--black); z-index: 100; display: flex; flex-direction: column; }
+    .side-logo { padding: 24px 20px 16px; border-bottom: 1px solid var(--g800); }
+    .side-logo h1 { font-family: var(--fd); font-size: 15px; font-weight: 600; color: var(--accent); letter-spacing: 0.08em; }
+    .side-logo p { font-family: var(--fm); font-size: 8px; color: var(--g500); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 3px; }
+    .side nav { padding: 12px 0; flex: 1; overflow-y: auto; }
+    .side a { display: flex; align-items: center; gap: 8px; padding: 9px 20px; font-size: 12px; font-weight: 500; color: var(--g400); text-decoration: none; border-left: 3px solid transparent; transition: all 0.15s; }
+    .side a:hover { color: var(--white); background: var(--g900); }
+    .side a.active { color: var(--accent); border-left-color: var(--accent); background: rgba(167,251,144,0.05); }
+    .side a .d { width: 5px; height: 5px; border-radius: 50%; background: var(--g600); }
+    .side a.active .d { background: var(--accent); }
+
+    /* ═══ MAIN ═══ */
+    .main { margin-left: var(--side); min-height: 100vh; }
+
+    /* ═══ SECTION ═══ */
+    .sec { padding: 48px 40px; border-bottom: 1px solid var(--g200); }
+    .sec-k { font-family: var(--fm); font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent-dark); margin-bottom: 6px; }
+    .sec-t { font-family: var(--fd); font-size: 32px; font-weight: 700; color: var(--black); line-height: 1.1; margin-bottom: 8px; }
+    .sec-d { font-size: 14px; color: var(--g500); max-width: 500px; line-height: 1.6; margin-bottom: 32px; }
+
+    .sub { font-family: var(--fd); font-size: 16px; font-weight: 600; color: var(--black); margin: 28px 0 12px; }
+    .sub:first-of-type { margin-top: 0; }
+    .lbl { font-family: var(--fm); font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--g400); margin-bottom: 6px; }
+
+    /* ═══ SPLIT PANEL: options left, preview right ═══ */
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+    .opts { display: flex; flex-direction: column; gap: 12px; }
+    .prev-box { background: var(--white); border-radius: 16px; border: 1px solid var(--g200); padding: 28px; position: sticky; top: 20px; }
+    .prev-box.dark { background: var(--black); border-color: var(--g800); }
+    .prev-label { font-family: var(--fm); font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--g400); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--g200); }
+    .prev-box.dark .prev-label { border-bottom-color: var(--g800); color: var(--g600); }
+
+    /* ═══ SELECTABLE OPTION ═══ */
+    .opt {
+      background: var(--white); border-radius: 12px; padding: 14px 16px;
+      border: 2px solid var(--g200); cursor: pointer; transition: all 0.15s;
+    }
+    .opt:hover { border-color: var(--g300); }
+    .opt.sel { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(167,251,144,0.15); }
+    .opt-name { font-family: var(--fm); font-size: 9px; color: var(--accent-dark); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin-bottom: 6px; }
+    .opt-preview { font-size: 13px; color: var(--g700); }
+
+    /* ═══ COLOR SWATCH ═══ */
+    .sw { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: var(--white); border-radius: 10px; border: 2px solid var(--g200); cursor: pointer; transition: all 0.15s; }
+    .sw:hover { border-color: var(--g300); }
+    .sw.sel { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(167,251,144,0.15); }
+    .sw-dot { width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.06); }
+    .sw-info { flex: 1; }
+    .sw-name { font-size: 12px; font-weight: 600; color: var(--black); }
+    .sw-hex { font-family: var(--fm); font-size: 10px; color: var(--g400); }
+
+    /* ═══ GRID HELPERS ═══ */
+    .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    .g4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .fw { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    /* ═══ COMPONENT DEMOS ═══ */
+    .btn-d { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; border-radius: 10px; font-size: 13px; font-weight: 600; font-family: var(--fb); border: none; cursor: pointer; transition: all 0.15s; }
+    .badge-d { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 100px; font-family: var(--fm); font-size: 9px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; }
+    .stat-d { text-align: center; padding: 16px; border-radius: 12px; background: var(--g50); border: 1px solid var(--g200); transition: all 0.2s; }
+    .stat-d:hover { border-color: rgba(167,251,144,0.3); }
+    .stat-v { font-family: var(--fd); font-size: 24px; font-weight: 700; color: var(--accent-dark); }
+    .stat-l { font-family: var(--fm); font-size: 9px; color: var(--g500); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
+
+    .card-d { background: var(--white); border-radius: 14px; border: 1px solid var(--g200); overflow: hidden; transition: all 0.2s; }
+    .card-d:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
+    .card-img { height: 80px; display: flex; align-items: center; justify-content: center; }
+    .card-body { padding: 14px; }
+    .card-body h4 { font-family: var(--fd); font-size: 14px; font-weight: 600; color: var(--black); margin-bottom: 4px; }
+    .card-body p { font-size: 12px; color: var(--g500); line-height: 1.4; }
+
+    .effect-box { border-radius: 14px; padding: 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100px; gap: 8px; transition: all 0.3s; }
+    .effect-name { font-family: var(--fm); font-size: 9px; color: var(--g400); text-transform: uppercase; letter-spacing: 0.08em; }
+
+    /* ═══ TOAST ═══ */
+    .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--black); color: var(--accent); padding: 10px 20px; border-radius: 8px; font-family: var(--fm); font-size: 11px; z-index: 200; transition: transform 0.25s ease; border: 1px solid var(--g800); }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ═══ RESPONSIVE ═══ */
+    @media (max-width: 1024px) {
+      .side { display: none; }
+      .main { margin-left: 0; }
+      .sec { padding: 32px 20px; }
+      .split { grid-template-columns: 1fr; }
+      .prev-box { position: static; }
+      .g3, .g4 { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 640px) {
+      .g2, .g3, .g4 { grid-template-columns: 1fr; }
+      .sec-t { font-size: 26px; }
+    }
+
+    .mob-nav { display: none; position: fixed; top: 0; left: 0; right: 0; height: 52px; background: var(--black); z-index: 100; align-items: center; padding: 0 16px; justify-content: space-between; }
+    .mob-nav h1 { font-family: var(--fd); font-size: 13px; color: var(--accent); font-weight: 600; }
+    .ham { width: 26px; height: 26px; display: flex; flex-direction: column; justify-content: center; gap: 4px; cursor: pointer; background: none; border: none; }
+    .ham span { display: block; width: 100%; height: 2px; background: var(--g400); border-radius: 2px; }
+    .mob-menu { display: none; position: fixed; top: 52px; left: 0; right: 0; bottom: 0; background: var(--black); z-index: 99; padding: 16px; flex-direction: column; gap: 4px; }
+    .mob-menu.open { display: flex; }
+    .mob-menu a { padding: 12px 14px; color: var(--g400); text-decoration: none; font-size: 14px; font-weight: 500; border-radius: 8px; }
+    .mob-menu a:hover { background: var(--g900); color: var(--white); }
+    @media (max-width: 1024px) { .mob-nav { display: flex; } .main { margin-top: 52px; } }
+  </style>
+</head>
+<body>
+  <div class="mob-nav">
+    <h1>HEARST BRAND</h1>
+    <button class="ham" onclick="document.getElementById('mm').classList.toggle('open')"><span></span><span></span><span></span></button>
+  </div>
+  <div class="mob-menu" id="mm">
+    <a href="#typo" onclick="this.parentElement.classList.remove('open')">Typography</a>
+    <a href="#colors" onclick="this.parentElement.classList.remove('open')">Colors</a>
+    <a href="#spacing" onclick="this.parentElement.classList.remove('open')">Spacing</a>
+    <a href="#comps" onclick="this.parentElement.classList.remove('open')">Components</a>
+    <a href="#layout" onclick="this.parentElement.classList.remove('open')">Layout</a>
+    <a href="#fx" onclick="this.parentElement.classList.remove('open')">Effects</a>
+  </div>
+
+  <aside class="side">
+    <div class="side-logo"><h1>HEARST</h1><p>Brand Book v1.0</p></div>
+    <nav id="sn">
+      <a href="#typo" class="active"><span class="d"></span>Typography</a>
+      <a href="#colors"><span class="d"></span>Colors</a>
+      <a href="#spacing"><span class="d"></span>Spacing</a>
+      <a href="#comps"><span class="d"></span>Components</a>
+      <a href="#layout"><span class="d"></span>Layout</a>
+      <a href="#fx"><span class="d"></span>Effects</a>
+    </nav>
+  </aside>
+
+  <div class="main">
+
+    <!-- ═══ 1. TYPOGRAPHY ═══ -->
+    <div class="sec" id="typo">
+      <div class="sec-k">01 — Typography</div>
+      <div class="sec-t">Type System</div>
+      <div class="sec-d">Select a style preset — preview updates instantly.</div>
+
+      <div class="split">
+        <div class="opts" id="type-opts">
+          <div class="opt sel" onclick="pickType('contrast',this)">
+            <div class="opt-name">Contrast — Active</div>
+            <div style="font-family:var(--fd);font-size:18px;font-weight:700;color:var(--accent-dark);">We Make <span style="color:var(--g500);">Mining</span></div>
+            <div style="font-size:12px;color:var(--g700);margin-top:4px;">H1 green + H2 gray split</div>
+          </div>
+          <div class="opt" onclick="pickType('editorial',this)">
+            <div class="opt-name">Editorial</div>
+            <div style="font-family:var(--fd);font-size:18px;font-weight:700;color:var(--black);">Sustainable <span style="color:var(--accent-dark);">Mining</span></div>
+            <div style="font-size:12px;color:var(--g500);margin-top:4px;">Clean & professional</div>
+          </div>
+          <div class="opt" onclick="pickType('bold',this)">
+            <div class="opt-name">Bold</div>
+            <div style="font-family:var(--fd);font-size:18px;font-weight:700;color:var(--accent-dark);">IMPACT</div>
+            <div style="font-size:12px;color:var(--g700);margin-top:4px;font-weight:500;">Strong accent + dark body</div>
+          </div>
+          <div class="opt" onclick="pickType('minimal',this)">
+            <div class="opt-name">Minimal</div>
+            <div style="font-family:var(--fb);font-size:18px;font-weight:500;color:var(--g700);">Sustainable Mining</div>
+            <div style="font-size:12px;color:var(--g400);margin-top:4px;font-weight:300;">Light & elegant</div>
+          </div>
+          <div class="opt" onclick="pickType('tech',this)">
+            <div class="opt-name">Tech</div>
+            <div style="font-family:var(--fm);font-size:15px;font-weight:600;color:var(--accent);">HEARST_MINING</div>
+            <div style="font-family:var(--fm);font-size:11px;color:var(--g500);margin-top:4px;">&gt; connect()</div>
+          </div>
+          <div class="opt" onclick="pickType('luxury',this)">
+            <div class="opt-name">Luxury</div>
+            <div style="font-family:var(--fd);font-size:18px;font-weight:400;color:var(--black);letter-spacing:0.06em;">HEARST</div>
+            <div style="font-size:12px;color:var(--g500);margin-top:4px;font-weight:300;letter-spacing:0.1em;text-transform:uppercase;">Premium refined</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="prev-box">
+            <div class="prev-label">Live Preview — Light</div>
+            <h1 id="tp-h1" style="margin-bottom:10px;transition:all .2s;">We Make Crypto Mining Sustainable</h1>
+            <h2 id="tp-h2" style="margin-bottom:8px;transition:all .2s;">Mining-as-a-Service for Institutions</h2>
+            <h3 id="tp-h3" style="margin-bottom:8px;transition:all .2s;">Core Capabilities & Infrastructure</h3>
+            <p id="tp-p" style="transition:all .2s;">Our mission is to create a cleaner, smarter world by integrating renewable energy and responsible innovation.</p>
+          </div>
+          <div class="prev-box dark" style="margin-top:16px;">
+            <div class="prev-label">Live Preview — Dark</div>
+            <h1 id="tp-h1d" style="margin-bottom:10px;transition:all .2s;">We Make Crypto Mining Sustainable</h1>
+            <h2 id="tp-h2d" style="margin-bottom:8px;transition:all .2s;">Mining-as-a-Service for Institutions</h2>
+            <h3 id="tp-h3d" style="margin-bottom:8px;transition:all .2s;">Core Capabilities & Infrastructure</h3>
+            <p id="tp-p-d" style="transition:all .2s;">Our mission is to create a cleaner, smarter world by integrating renewable energy and responsible innovation.</p>
+          </div>
+          <div id="type-css" style="background:var(--g900);border-radius:12px;padding:16px;margin-top:16px;font-family:var(--fm);font-size:10px;color:var(--g400);white-space:pre;overflow-x:auto;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ 2. COLORS ═══ -->
+    <div class="sec" id="colors">
+      <div class="sec-k">02 — Colors</div>
+      <div class="sec-t">Color Palette</div>
+      <div class="sec-d">Tap a color — see it applied to the preview composition.</div>
+
+      <div class="split">
+        <div>
+          <div class="sub">Accent</div>
+          <div class="opts">
+            <div class="sw" onclick="pickColor('bg',this,'#C4FDB5')"><div class="sw-dot" style="background:#C4FDB5;"></div><div class="sw-info"><div class="sw-name">Accent Light</div><div class="sw-hex">#C4FDB5</div></div></div>
+            <div class="sw" onclick="pickColor('bg',this,'#A7FB90')"><div class="sw-dot" style="background:#A7FB90;"></div><div class="sw-info"><div class="sw-name">Accent</div><div class="sw-hex">#A7FB90</div></div></div>
+            <div class="sw sel" onclick="pickColor('bg',this,'#73DE56')"><div class="sw-dot" style="background:#73DE56;"></div><div class="sw-info"><div class="sw-name">Accent Dark</div><div class="sw-hex">#73DE56</div></div></div>
+          </div>
+          <div class="sub">Neutrals</div>
+          <div class="g3">
+            <div class="sw" onclick="pickColor('text',this,'#000')"><div class="sw-dot" style="background:#000;"></div><div class="sw-info"><div class="sw-name">Black</div><div class="sw-hex">#000</div></div></div>
+            <div class="sw" onclick="pickColor('text',this,'#111')"><div class="sw-dot" style="background:#111;"></div><div class="sw-info"><div class="sw-name">900</div><div class="sw-hex">#111</div></div></div>
+            <div class="sw" onclick="pickColor('text',this,'#2a2a2a')"><div class="sw-dot" style="background:#2a2a2a;"></div><div class="sw-info"><div class="sw-name">700</div><div class="sw-hex">#2a2a2a</div></div></div>
+            <div class="sw" onclick="pickColor('text',this,'#7F7F7F')"><div class="sw-dot" style="background:#7F7F7F;"></div><div class="sw-info"><div class="sw-name">500</div><div class="sw-hex">#7F7F7F</div></div></div>
+            <div class="sw" onclick="pickColor('text',this,'#B2B2B2')"><div class="sw-dot" style="background:#B2B2B2;"></div><div class="sw-info"><div class="sw-name">400</div><div class="sw-hex">#B2B2B2</div></div></div>
+            <div class="sw" onclick="pickColor('text',this,'#E8E8E8')"><div class="sw-dot" style="background:#E8E8E8;"></div><div class="sw-info"><div class="sw-name">200</div><div class="sw-hex">#E8E8E8</div></div></div>
+            <div class="sw" onclick="pickColor('bg',this,'#F2F2F2')"><div class="sw-dot" style="background:#F2F2F2;border:1px solid #ddd;"></div><div class="sw-info"><div class="sw-name">100</div><div class="sw-hex">#F2F2F2</div></div></div>
+            <div class="sw" onclick="pickColor('bg',this,'#FCFDFC')"><div class="sw-dot" style="background:#FCFDFC;border:1px solid #ddd;"></div><div class="sw-info"><div class="sw-name">50</div><div class="sw-hex">#FCFDFC</div></div></div>
+            <div class="sw" onclick="pickColor('bg',this,'#FFF')"><div class="sw-dot" style="background:#FFF;border:1px solid #ddd;"></div><div class="sw-info"><div class="sw-name">White</div><div class="sw-hex">#FFF</div></div></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="prev-box" id="color-prev" style="min-height:280px;">
+            <div class="prev-label">Color Preview</div>
+            <div id="cprev-card" style="border-radius:14px;padding:28px;background:var(--black);transition:all .3s;">
+              <div style="font-family:var(--fm);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:12px;" id="cprev-kicker">Hearst Corporation</div>
+              <h2 id="cprev-title" style="font-family:var(--fd);font-size:28px;font-weight:700;margin-bottom:8px;transition:all .3s;"><span id="cprev-a">We Make</span> <span id="cprev-b">Mining</span></h2>
+              <p id="cprev-body" style="font-size:13px;line-height:1.6;transition:all .3s;">Sustainable crypto mining infrastructure for institutions worldwide.</p>
+              <div style="margin-top:16px;display:flex;gap:8px;">
+                <span id="cprev-btn" style="display:inline-block;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;transition:all .3s;">Get Started</span>
+                <span id="cprev-btn2" style="display:inline-block;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;border:1px solid;transition:all .3s;">Learn More</span>
+              </div>
+            </div>
+          </div>
+          <div id="color-info" style="background:var(--g900);border-radius:12px;padding:14px;margin-top:12px;font-family:var(--fm);font-size:10px;color:var(--g400);"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ 3. SPACING ═══ -->
+    <div class="sec" id="spacing">
+      <div class="sec-k">03 — Spacing</div>
+      <div class="sec-t">Spacing Scale</div>
+      <div class="sec-d">Tap a spacing value — preview updates with that spacing applied.</div>
+
+      <div class="split">
+        <div class="opts" id="space-opts">
+          <div class="opt" onclick="pickSpace(4,this)"><div class="opt-name">4px — Micro</div><div style="height:4px;background:var(--accent-muted);border-radius:2px;border:1px solid rgba(167,251,144,0.3);"></div></div>
+          <div class="opt" onclick="pickSpace(8,this)"><div class="opt-name">8px — Tight</div><div style="height:8px;background:var(--accent-muted);border-radius:2px;border:1px solid rgba(167,251,144,0.3);"></div></div>
+          <div class="opt" onclick="pickSpace(12,this)"><div class="opt-name">12px — Compact</div><div style="height:12px;background:var(--accent-muted);border-radius:2px;border:1px solid rgba(167,251,144,0.3);"></div></div>
+          <div class="opt sel" onclick="pickSpace(16,this)"><div class="opt-name">16px — Default</div><div style="height:16px;background:var(--accent-muted);border-radius:2px;border:1px solid rgba(167,251,144,0.3);"></div></div>
+          <div class="opt" onclick="pickSpace(20,this)"><div class="opt-name">20px — Comfortable</div><div style="height:20px;background:var(--accent-muted);border-radius:2px;border:1px solid rgba(167,251,144,0.3);"></div></div>
+          <div class="opt" onclick="pickSpace(24,this)"><div class="opt-name">24px — Relaxed</div><div style="height:24px;background:var(--accent-muted);border-radius:2px;border:1px solid rgba(167,251,144,0.3);"></div></div>
+          <div class="opt" onclick="pickSpace(32,this)"><div class="opt-name">32px — Section</div><div style="height:32px;background:var(--accent-muted);border-radius:2px;border:1px solid rgba(167,251,144,0.3);"></div></div>
+          <div class="opt" onclick="pickSpace(48,this)"><div class="opt-name">48px — Large</div><div style="height:48px;background:var(--accent-muted);border-radius:2px;border:1px solid rgba(167,251,144,0.3);"></div></div>
+        </div>
+
+        <div>
+          <div class="prev-box">
+            <div class="prev-label">Spacing Preview</div>
+            <div id="sp-grid" style="display:grid;grid-template-columns:1fr 1fr;transition:all .3s;">
+              <div style="background:var(--accent-subtle);border:1px dashed rgba(167,251,144,0.4);border-radius:8px;padding:16px;text-align:center;font-family:var(--fm);font-size:10px;color:var(--accent-dark);">Card A</div>
+              <div style="background:var(--accent-subtle);border:1px dashed rgba(167,251,144,0.4);border-radius:8px;padding:16px;text-align:center;font-family:var(--fm);font-size:10px;color:var(--accent-dark);">Card B</div>
+              <div style="background:var(--accent-subtle);border:1px dashed rgba(167,251,144,0.4);border-radius:8px;padding:16px;text-align:center;font-family:var(--fm);font-size:10px;color:var(--accent-dark);">Card C</div>
+              <div style="background:var(--accent-subtle);border:1px dashed rgba(167,251,144,0.4);border-radius:8px;padding:16px;text-align:center;font-family:var(--fm);font-size:10px;color:var(--accent-dark);">Card D</div>
+            </div>
+            <div id="sp-val" style="text-align:center;font-family:var(--fm);font-size:11px;color:var(--accent-dark);margin-top:12px;">gap: 16px / padding: 16px</div>
+          </div>
+          <div class="prev-box" style="margin-top:16px;">
+            <div class="prev-label">Stack Preview</div>
+            <div id="sp-stack" style="display:flex;flex-direction:column;transition:all .3s;">
+              <div style="background:var(--g100);border-radius:8px;padding:12px;font-family:var(--fm);font-size:10px;color:var(--g500);">Title Block</div>
+              <div style="background:var(--g100);border-radius:8px;padding:12px;font-family:var(--fm);font-size:10px;color:var(--g500);">Body Content</div>
+              <div style="background:var(--g100);border-radius:8px;padding:12px;font-family:var(--fm);font-size:10px;color:var(--g500);">Footer</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ 4. COMPONENTS ═══ -->
+    <div class="sec" id="comps">
+      <div class="sec-k">04 — Components</div>
+      <div class="sec-t">UI Components</div>
+      <div class="sec-d">Tap a component variant — see it rendered in the preview.</div>
+
+      <div class="split">
+        <div>
+          <div class="sub">Buttons</div>
+          <div class="opts" id="btn-opts">
+            <div class="opt sel" onclick="pickBtn('primary',this)">
+              <div class="opt-name">Primary</div>
+              <button class="btn-d" style="background:var(--accent);color:var(--black);">Get Started</button>
+            </div>
+            <div class="opt" onclick="pickBtn('secondary',this)">
+              <div class="opt-name">Secondary</div>
+              <button class="btn-d" style="background:var(--black);color:var(--white);">Learn More</button>
+            </div>
+            <div class="opt" onclick="pickBtn('outline',this)">
+              <div class="opt-name">Outline</div>
+              <button class="btn-d" style="background:transparent;color:var(--black);border:2px solid var(--g200);">Details</button>
+            </div>
+            <div class="opt" onclick="pickBtn('ghost',this)">
+              <div class="opt-name">Ghost</div>
+              <button class="btn-d" style="background:transparent;color:var(--accent-dark);">View All →</button>
+            </div>
+          </div>
+
+          <div class="sub">Cards</div>
+          <div class="opts" id="card-opts">
+            <div class="opt sel" onclick="pickCard('standard',this)">
+              <div class="opt-name">Standard Card</div>
+              <div style="font-size:12px;color:var(--g500);">White bg, subtle border, hover lift</div>
+            </div>
+            <div class="opt" onclick="pickCard('accent',this)">
+              <div class="opt-name">Accent Card</div>
+              <div style="font-size:12px;color:var(--g500);">Accent border, tinted background</div>
+            </div>
+            <div class="opt" onclick="pickCard('glass-light',this)">
+              <div class="opt-name">Glass Light</div>
+              <div style="font-size:12px;color:var(--g500);">Frosted glass on light bg</div>
+            </div>
+            <div class="opt" onclick="pickCard('glass-dark',this)">
+              <div class="opt-name">Glass Dark</div>
+              <div style="font-size:12px;color:var(--g500);">Frosted glass on dark bg</div>
+            </div>
+            <div class="opt" onclick="pickCard('stat',this)">
+              <div class="opt-name">Stat Card</div>
+              <div style="font-size:12px;color:var(--g500);">Metric display with accent value</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="prev-box" id="comp-prev">
+            <div class="prev-label">Component Preview</div>
+            <div id="comp-render" style="min-height:200px;display:flex;flex-direction:column;gap:16px;align-items:center;justify-content:center;"></div>
+          </div>
+          <div id="comp-css" style="background:var(--g900);border-radius:12px;padding:14px;margin-top:12px;font-family:var(--fm);font-size:10px;color:var(--g400);white-space:pre;overflow-x:auto;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ 5. LAYOUT ═══ -->
+    <div class="sec" id="layout">
+      <div class="sec-k">05 — Layout</div>
+      <div class="sec-t">Layout Patterns</div>
+      <div class="sec-d">Tap a layout — see the slide structure rendered.</div>
+
+      <div class="split">
+        <div class="opts" id="lay-opts">
+          <div class="opt sel" onclick="pickLayout('hero',this)">
+            <div class="opt-name">Hero — Full Dark</div>
+            <div style="font-size:12px;color:var(--g500);">Centered title on dark background</div>
+          </div>
+          <div class="opt" onclick="pickLayout('twocol',this)">
+            <div class="opt-name">Two-Column Slide</div>
+            <div style="font-size:12px;color:var(--g500);">Sidebar + kicker + 2-col grid</div>
+          </div>
+          <div class="opt" onclick="pickLayout('image',this)">
+            <div class="opt-name">Full-Bleed Image</div>
+            <div style="font-size:12px;color:var(--g500);">Edge-to-edge visual slide</div>
+          </div>
+          <div class="opt" onclick="pickLayout('cover',this)">
+            <div class="opt-name">Cover — White</div>
+            <div style="font-size:12px;color:var(--g500);">Minimal logo + brand line</div>
+          </div>
+        </div>
+
+        <div class="prev-box" style="padding:0;overflow:hidden;">
+          <div id="lay-render" style="min-height:300px;transition:all .3s;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ 6. EFFECTS ═══ -->
+    <div class="sec" id="fx">
+      <div class="sec-k">06 — Effects</div>
+      <div class="sec-t">Visual Effects</div>
+      <div class="sec-d">Tap an effect — see it applied to the preview element.</div>
+
+      <div class="split">
+        <div>
+          <div class="sub">Shadows</div>
+          <div class="opts" id="fx-opts">
+            <div class="opt sel" onclick="pickFx('subtle',this)"><div class="opt-name">Subtle</div><div style="font-size:12px;color:var(--g500);">Light elevation</div></div>
+            <div class="opt" onclick="pickFx('medium',this)"><div class="opt-name">Medium</div><div style="font-size:12px;color:var(--g500);">Default card shadow</div></div>
+            <div class="opt" onclick="pickFx('elevated',this)"><div class="opt-name">Elevated</div><div style="font-size:12px;color:var(--g500);">Modal / dropdown</div></div>
+            <div class="opt" onclick="pickFx('glow',this)"><div class="opt-name">Accent Glow</div><div style="font-size:12px;color:var(--g500);">Green glow on dark</div></div>
+            <div class="opt" onclick="pickFx('ring',this)"><div class="opt-name">Accent Ring</div><div style="font-size:12px;color:var(--g500);">Focus / selected state</div></div>
+          </div>
+          <div class="sub">Borders</div>
+          <div class="opts" id="brd-opts">
+            <div class="opt" onclick="pickBorder('subtle',this)"><div class="opt-name">Subtle</div></div>
+            <div class="opt" onclick="pickBorder('accent-subtle',this)"><div class="opt-name">Accent Subtle</div></div>
+            <div class="opt" onclick="pickBorder('accent-glow',this)"><div class="opt-name">Accent Glow</div></div>
+            <div class="opt" onclick="pickBorder('accent-solid',this)"><div class="opt-name">Accent Solid</div></div>
+            <div class="opt" onclick="pickBorder('left',this)"><div class="opt-name">Left Accent</div></div>
+          </div>
+          <div class="sub">Radius</div>
+          <div class="fw" id="rad-opts">
+            <div class="opt" style="padding:10px 14px;" onclick="pickRadius(4,this)"><div class="opt-name">4px</div></div>
+            <div class="opt" style="padding:10px 14px;" onclick="pickRadius(8,this)"><div class="opt-name">8px</div></div>
+            <div class="opt sel" style="padding:10px 14px;" onclick="pickRadius(12,this)"><div class="opt-name">12px</div></div>
+            <div class="opt" style="padding:10px 14px;" onclick="pickRadius(16,this)"><div class="opt-name">16px</div></div>
+            <div class="opt" style="padding:10px 14px;" onclick="pickRadius(100,this)"><div class="opt-name">Full</div></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="prev-box">
+            <div class="prev-label">Effect Preview</div>
+            <div id="fx-el" style="width:200px;height:200px;margin:20px auto;background:var(--white);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;transition:all .3s;">
+              <div style="font-family:var(--fd);font-size:20px;font-weight:600;color:var(--black);" id="fx-label">Subtle</div>
+              <div style="font-family:var(--fm);font-size:9px;color:var(--g400);text-transform:uppercase;letter-spacing:0.1em;" id="fx-css-short">box-shadow: 0 1px 3px...</div>
+            </div>
+          </div>
+          <div class="prev-box dark" style="margin-top:16px;">
+            <div class="prev-label">On Dark</div>
+            <div id="fx-el-dark" style="width:200px;height:200px;margin:20px auto;background:var(--g800);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;transition:all .3s;">
+              <div style="font-family:var(--fd);font-size:20px;font-weight:600;color:var(--white);" id="fx-label-d">Subtle</div>
+              <div style="font-family:var(--fm);font-size:9px;color:var(--g600);text-transform:uppercase;letter-spacing:0.1em;" id="fx-css-short-d">box-shadow: 0 1px 3px...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    function sel(parent, el) { parent.querySelectorAll('.opt,.sw').forEach(o => o.classList.remove('sel')); if(el) el.classList.add('sel'); }
+    function toast(m) { const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1800); }
+
+    // ═══ SIDEBAR SCROLL SPY ═══
+    const obs = new IntersectionObserver(es => { es.forEach(e => { if(e.isIntersecting) { document.querySelectorAll('#sn a').forEach(a=>a.classList.remove('active')); const a=document.querySelector('#sn a[href="#'+e.target.id+'"]'); if(a) a.classList.add('active'); }}); }, {threshold: 0.25});
+    document.querySelectorAll('.sec').forEach(s=>obs.observe(s));
+
+    // ═══ 1. TYPOGRAPHY ═══
+    const types = {
+      contrast:   { h1:{f:'var(--fd)',s:32,w:700,c:'#73DE56'}, h2:{f:'var(--fd)',s:18,w:600,c:'#7F7F7F'}, h3:{f:'var(--fb)',s:16,w:600,c:'#000'}, p:{f:'var(--fb)',s:14,w:400,c:'#2a2a2a'} },
+      editorial:  { h1:{f:'var(--fd)',s:32,w:700,c:'#000'},    h2:{f:'var(--fd)',s:20,w:600,c:'#73DE56'}, h3:{f:'var(--fb)',s:16,w:600,c:'#000'}, p:{f:'var(--fb)',s:14,w:400,c:'#7F7F7F'} },
+      bold:       { h1:{f:'var(--fd)',s:36,w:700,c:'#73DE56'}, h2:{f:'var(--fd)',s:22,w:700,c:'#000'},    h3:{f:'var(--fd)',s:18,w:600,c:'#2a2a2a'}, p:{f:'var(--fb)',s:14,w:500,c:'#2a2a2a'} },
+      minimal:    { h1:{f:'var(--fb)',s:28,w:500,c:'#2a2a2a'}, h2:{f:'var(--fb)',s:18,w:400,c:'#7F7F7F'}, h3:{f:'var(--fb)',s:14,w:500,c:'#7F7F7F'}, p:{f:'var(--fb)',s:13,w:300,c:'#B2B2B2'} },
+      tech:       { h1:{f:'var(--fm)',s:24,w:600,c:'#A7FB90'}, h2:{f:'var(--fm)',s:16,w:500,c:'#000'},    h3:{f:'var(--fm)',s:13,w:500,c:'#7F7F7F'}, p:{f:'var(--fm)',s:12,w:400,c:'#7F7F7F'} },
+      luxury:     { h1:{f:'var(--fd)',s:34,w:400,c:'#000'},    h2:{f:'var(--fb)',s:16,w:300,c:'#73DE56'}, h3:{f:'var(--fb)',s:13,w:500,c:'#7F7F7F'}, p:{f:'var(--fb)',s:13,w:300,c:'#7F7F7F'} },
+    };
+
+    function applyT(id,cfg,dark) {
+      const el=document.getElementById(id); if(!el) return;
+      el.style.fontFamily=cfg.f; el.style.fontSize=cfg.s+'px'; el.style.fontWeight=cfg.w; el.style.lineHeight=id.includes('p')?'1.6':'1.2';
+      let c=cfg.c;
+      if(dark) { if(c==='#000') c='#FFF'; else if(c==='#2a2a2a') c='#B2B2B2'; else if(c==='#7F7F7F') c='#B2B2B2'; }
+      el.style.color=c;
+    }
+
+    function pickType(k,el) {
+      sel(document.getElementById('type-opts'),el);
+      const t=types[k];
+      applyT('tp-h1',t.h1,false); applyT('tp-h2',t.h2,false); applyT('tp-h3',t.h3,false); applyT('tp-p',t.p,false);
+      applyT('tp-h1d',t.h1,true); applyT('tp-h2d',t.h2,true); applyT('tp-h3d',t.h3,true); applyT('tp-p-d',t.p,true);
+      document.getElementById('type-css').textContent=`/* ${k.charAt(0).toUpperCase()+k.slice(1)} */\nh1 { font-size: ${t.h1.s}px; font-weight: ${t.h1.w}; color: ${t.h1.c}; }\nh2 { font-size: ${t.h2.s}px; font-weight: ${t.h2.w}; color: ${t.h2.c}; }\nh3 { font-size: ${t.h3.s}px; font-weight: ${t.h3.w}; color: ${t.h3.c}; }\np  { font-size: ${t.p.s}px; font-weight: ${t.p.w}; color: ${t.p.c}; }`;
+      toast('Style: '+k);
+    }
+    pickType('contrast',document.querySelector('#type-opts .opt'));
+
+    // ═══ 2. COLORS ═══
+    let cState={bg:'#000',accent:'#73DE56',text:'#B2B2B2'};
+    function pickColor(role,el,hex) {
+      if(role==='bg') { cState.bg=hex; cState.accent=hex; }
+      else cState.text=hex;
+      const card=document.getElementById('cprev-card');
+      const isLight=['#F2F2F2','#FCFDFC','#FFF','#E8E8E8','#C4FDB5','#A7FB90'].includes(hex);
+      if(role==='bg') {
+        card.style.background=hex;
+        document.getElementById('cprev-kicker').style.color=isLight?'#7F7F7F':'#7F7F7F';
+        document.getElementById('cprev-a').style.color=isLight?'#73DE56':'#A7FB90';
+        document.getElementById('cprev-b').style.color=isLight?'#000':'#FFF';
+        document.getElementById('cprev-body').style.color=isLight?'#2a2a2a':'#B2B2B2';
+        document.getElementById('cprev-btn').style.background=isLight?'#000':'var(--accent)';
+        document.getElementById('cprev-btn').style.color=isLight?'#FFF':'#000';
+        document.getElementById('cprev-btn2').style.color=isLight?'#000':'#FFF';
+        document.getElementById('cprev-btn2').style.borderColor=isLight?'#E8E8E8':'rgba(255,255,255,0.2)';
+      } else {
+        document.getElementById('cprev-body').style.color=hex;
+      }
+      document.getElementById('color-info').textContent='Selected: '+hex+' ('+role+')';
+      toast('Copied '+hex);
+      navigator.clipboard.writeText(hex).catch(()=>{});
+    }
+
+    // ═══ 3. SPACING ═══
+    function pickSpace(px,el) {
+      sel(document.getElementById('space-opts'),el);
+      document.getElementById('sp-grid').style.gap=px+'px';
+      document.getElementById('sp-grid').querySelectorAll('div').forEach(d=>d.style.padding=px+'px');
+      document.getElementById('sp-stack').style.gap=px+'px';
+      document.getElementById('sp-val').textContent='gap: '+px+'px / padding: '+px+'px';
+      toast(px+'px spacing');
+    }
+    pickSpace(16,document.querySelector('#space-opts .opt.sel'));
+
+    // ═══ 4. COMPONENTS ═══
+    function pickBtn(v,el) {
+      sel(document.getElementById('btn-opts'),el);
+      const r=document.getElementById('comp-render');
+      const styles={
+        primary:{bg:'var(--accent)',c:'var(--black)',b:'none'},
+        secondary:{bg:'var(--black)',c:'var(--white)',b:'none'},
+        outline:{bg:'transparent',c:'var(--black)',b:'2px solid var(--g200)'},
+        ghost:{bg:'transparent',c:'var(--accent-dark)',b:'none'},
+      };
+      const s=styles[v];
+      r.innerHTML=`
+        <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+          <button class="btn-d" style="background:${s.bg};color:${s.c};border:${s.b};padding:8px 16px;font-size:12px;">Small</button>
+          <button class="btn-d" style="background:${s.bg};color:${s.c};border:${s.b};">Default</button>
+          <button class="btn-d" style="background:${s.bg};color:${s.c};border:${s.b};padding:14px 28px;font-size:15px;">Large</button>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:8px;">
+          <span class="badge-d" style="background:var(--accent-muted);color:var(--accent-dark);">● Active</span>
+          <span class="badge-d" style="background:var(--g800);color:var(--g300);">Offline</span>
+          <span class="badge-d" style="background:transparent;border:1px solid var(--g200);color:var(--g500);">Draft</span>
+        </div>`;
+      document.getElementById('comp-css').textContent=`.btn-${v} {\n  background: ${s.bg};\n  color: ${s.c};\n  border: ${s.b};\n  border-radius: 10px;\n  padding: 10px 20px;\n}`;
+      toast('Button: '+v);
+    }
+
+    function pickCard(v,el) {
+      sel(document.getElementById('card-opts'),el);
+      const r=document.getElementById('comp-render');
+      const p=document.getElementById('comp-prev');
+      p.classList.remove('dark'); p.style.background='';
+      if(v==='standard') {
+        r.innerHTML=`<div class="card-d" style="width:100%;max-width:280px;"><div class="card-img" style="background:linear-gradient(135deg,var(--black),var(--g800));"><span style="font-family:var(--fd);font-size:20px;font-weight:700;color:var(--accent);">H</span></div><div class="card-body"><h4>Mining Operations</h4><p>Real-time monitoring of global infrastructure.</p></div></div>`;
+        document.getElementById('comp-css').textContent=`.card {\n  background: #FFF;\n  border: 1px solid #E8E8E8;\n  border-radius: 14px;\n  overflow: hidden;\n}\n.card:hover {\n  transform: translateY(-2px);\n  box-shadow: 0 8px 20px rgba(0,0,0,0.06);\n}`;
+      } else if(v==='accent') {
+        r.innerHTML=`<div style="width:100%;max-width:320px;border-radius:12px;padding:20px;border:1px solid rgba(167,251,144,0.3);background:rgba(167,251,144,0.04);"><h4 style="font-size:14px;font-weight:600;color:var(--black);margin-bottom:6px;display:flex;align-items:center;gap:8px;">📱 Monitoring Dashboard</h4><p style="font-size:13px;color:var(--g700);line-height:1.6;">Real-time data about cryptocurrency rewards and mining operations.</p></div>`;
+        document.getElementById('comp-css').textContent=`.section-card-accent {\n  border: 1px solid rgba(167,251,144,0.3);\n  background: rgba(167,251,144,0.04);\n  border-radius: 12px;\n  padding: 20px;\n}`;
+      } else if(v==='glass-light') {
+        p.style.background='linear-gradient(135deg,var(--g100),var(--g200))';
+        r.innerHTML=`<div style="width:100%;max-width:320px;padding:24px;border-radius:16px;background:rgba(255,255,255,0.7);backdrop-filter:blur(12px);border:1px solid rgba(167,251,144,0.12);"><h4 style="font-family:var(--fd);font-weight:600;color:var(--black);margin-bottom:6px;">Glass Light</h4><p style="font-size:13px;color:var(--g600);line-height:1.5;">Frosted glass on light backgrounds.</p><span class="badge-d" style="background:var(--accent-muted);color:var(--accent-dark);margin-top:8px;display:inline-flex;">Active</span></div>`;
+        document.getElementById('comp-css').textContent=`.glass-light {\n  background: rgba(255,255,255,0.7);\n  backdrop-filter: blur(12px);\n  border: 1px solid rgba(167,251,144,0.12);\n  border-radius: 16px;\n}`;
+      } else if(v==='glass-dark') {
+        p.style.background='linear-gradient(135deg,var(--black),var(--g800))';
+        r.innerHTML=`<div style="width:100%;max-width:320px;padding:24px;border-radius:16px;background:rgba(0,0,0,0.6);backdrop-filter:blur(12px);border:1px solid rgba(167,251,144,0.15);"><h4 style="font-family:var(--fd);font-weight:600;color:var(--white);margin-bottom:6px;">Glass Dark</h4><p style="font-size:13px;color:var(--g400);line-height:1.5;">Frosted glass on dark backgrounds.</p><span class="badge-d" style="background:var(--accent-muted);color:var(--accent-dark);margin-top:8px;display:inline-flex;">Mining</span></div>`;
+        document.getElementById('comp-css').textContent=`.glass-dark {\n  background: rgba(0,0,0,0.6);\n  backdrop-filter: blur(12px);\n  border: 1px solid rgba(167,251,144,0.15);\n  border-radius: 16px;\n}`;
+      } else if(v==='stat') {
+        r.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;">
+          <div class="stat-d"><div class="stat-v">12%</div><div class="stat-l">APR</div></div>
+          <div class="stat-d"><div class="stat-v">€7M</div><div class="stat-l">Raised</div></div>
+          <div class="stat-d"><div class="stat-v">1,682</div><div class="stat-l">Participants</div></div>
+          <div class="stat-d"><div class="stat-v">7</div><div class="stat-l">Locations</div></div></div>`;
+        document.getElementById('comp-css').textContent=`.stat-card {\n  text-align: center;\n  padding: 16px;\n  border: 1px solid rgba(0,0,0,0.04);\n  border-radius: 12px;\n}\n.stat-value {\n  font-size: 24px;\n  font-weight: 700;\n  color: #73DE56;\n}`;
+      }
+      toast('Card: '+v);
+    }
+    pickBtn('primary',document.querySelector('#btn-opts .opt'));
+
+    // ═══ 5. LAYOUT ═══
+    function pickLayout(v,el) {
+      sel(document.getElementById('lay-opts'),el);
+      const r=document.getElementById('lay-render');
+      if(v==='hero') {
+        r.innerHTML=`<div style="background:var(--black);padding:48px;text-align:center;min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;"><div style="font-family:var(--fm);font-size:9px;color:var(--g500);letter-spacing:0.4em;text-transform:uppercase;margin-bottom:16px;">Hearst Corporation</div><div style="font-family:var(--fd);font-size:28px;font-weight:700;line-height:1.1;"><span style="color:var(--accent);">We Make</span> <span style="color:white;">Crypto Mining</span></div><div style="font-size:13px;color:var(--g400);margin-top:14px;">Mining Designed for Institutions</div><button class="btn-d" style="background:var(--accent);color:var(--black);margin-top:20px;">Explore</button></div>`;
+      } else if(v==='twocol') {
+        r.innerHTML=`<div style="display:flex;min-height:300px;"><div style="width:6px;background:var(--black);"></div><div style="flex:1;padding:24px;background:var(--white);"><div style="font-family:var(--fm);font-size:9px;color:var(--accent-dark);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:4px;">01 — Section</div><div style="font-family:var(--fd);font-size:22px;font-weight:600;margin-bottom:4px;"><span style="color:var(--accent-dark);">Section</span> <span style="color:var(--g500);">Title</span></div><div style="width:50px;height:3px;background:var(--accent);border-radius:2px;margin-bottom:20px;"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;"><div><div style="background:var(--g100);border-radius:8px;padding:12px;font-size:12px;color:var(--g500);margin-bottom:8px;">Body paragraph text</div><div style="border:1px solid var(--g200);border-radius:8px;padding:12px;font-size:12px;"><span style="font-weight:600;color:var(--black);">🔧 Card Title</span><br><span style="color:var(--g700);">Card content</span></div></div><div style="border-left:1px solid var(--g200);padding-left:12px;"><div style="border:1px solid rgba(167,251,144,0.3);background:rgba(167,251,144,0.04);border-radius:8px;padding:12px;font-size:12px;"><span style="font-weight:600;color:var(--black);">📱 Accent Card</span><br><span style="color:var(--g700);">Highlighted content</span></div></div></div></div></div>`;
+      } else if(v==='image') {
+        r.innerHTML=`<div style="background:var(--g800);min-height:300px;display:flex;align-items:center;justify-content:center;position:relative;"><div style="font-family:var(--fm);font-size:14px;color:var(--g500);">Full-bleed image</div><div style="position:absolute;bottom:12px;right:16px;font-family:var(--fm);font-size:9px;color:var(--g600);display:flex;align-items:center;gap:8px;"><div style="width:16px;height:1px;background:var(--g600);"></div>03 / 29</div><div style="position:absolute;bottom:12px;left:16px;display:flex;align-items:center;gap:6px;"><div style="width:12px;height:12px;border-radius:50%;background:var(--accent);opacity:0.3;"></div><span style="font-family:var(--fm);font-size:7px;color:rgba(255,255,255,0.2);letter-spacing:0.2em;text-transform:uppercase;">Confidential</span></div></div>`;
+      } else if(v==='cover') {
+        r.innerHTML=`<div style="background:var(--white);min-height:300px;display:flex;align-items:center;justify-content:center;position:relative;"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(to right,transparent,rgba(167,251,144,0.4),transparent);"></div><div style="text-align:center;opacity:0.08;font-family:var(--fd);font-size:80px;font-weight:700;color:var(--accent-dark);">H</div><div style="position:absolute;bottom:24px;left:24px;display:flex;align-items:end;gap:12px;"><div style="font-family:var(--fd);font-size:24px;font-weight:700;color:var(--accent);">H</div><div><div style="font-family:var(--fm);font-size:8px;color:var(--g400);letter-spacing:0.3em;text-transform:uppercase;">Hearst Corporation</div><div style="width:30px;height:2px;background:var(--accent);border-radius:1px;margin-top:6px;"></div></div></div></div>`;
+      }
+      toast('Layout: '+v);
+    }
+    pickLayout('hero',document.querySelector('#lay-opts .opt'));
+
+    // ═══ 6. EFFECTS ═══
+    const fxMap = {
+      subtle:   {sh:'0 1px 3px rgba(0,0,0,0.06)',b:'1px solid var(--g200)',bg:'var(--white)',bgd:'var(--g800)'},
+      medium:   {sh:'0 4px 12px rgba(0,0,0,0.08)',b:'none',bg:'var(--white)',bgd:'var(--g800)'},
+      elevated: {sh:'0 8px 24px rgba(0,0,0,0.12)',b:'none',bg:'var(--white)',bgd:'var(--g800)'},
+      glow:     {sh:'0 0 20px rgba(167,251,144,0.3), 0 0 40px rgba(167,251,144,0.1)',b:'none',bg:'var(--black)',bgd:'var(--g900)'},
+      ring:     {sh:'0 4px 16px rgba(167,251,144,0.15), 0 0 0 1px rgba(167,251,144,0.2)',b:'none',bg:'var(--white)',bgd:'var(--g800)'},
+    };
+
+    function pickFx(v,el) {
+      sel(document.getElementById('fx-opts'),el);
+      const f=fxMap[v]; const e=document.getElementById('fx-el'); const ed=document.getElementById('fx-el-dark');
+      e.style.boxShadow=f.sh; e.style.border=f.b; e.style.background=f.bg==='var(--black)'?'var(--g800)':f.bg;
+      ed.style.boxShadow=f.sh; ed.style.border=f.b; ed.style.background=f.bgd;
+      const isGlow=v==='glow';
+      document.getElementById('fx-label').style.color=isGlow?'var(--accent)':'var(--black)';
+      document.getElementById('fx-label').textContent=v.charAt(0).toUpperCase()+v.slice(1);
+      document.getElementById('fx-label-d').textContent=v.charAt(0).toUpperCase()+v.slice(1);
+      document.getElementById('fx-css-short').textContent='box-shadow: '+f.sh.substring(0,30)+'...';
+      document.getElementById('fx-css-short-d').textContent='box-shadow: '+f.sh.substring(0,30)+'...';
+      toast('Effect: '+v);
+    }
+
+    function pickBorder(v,el) {
+      sel(document.getElementById('brd-opts'),el);
+      const e=document.getElementById('fx-el'); const ed=document.getElementById('fx-el-dark');
+      e.style.boxShadow='none'; ed.style.boxShadow='none';
+      const borders={
+        'subtle':'1px solid var(--g200)',
+        'accent-subtle':'1px solid rgba(167,251,144,0.2)',
+        'accent-glow':'1px solid rgba(167,251,144,0.4)',
+        'accent-solid':'2px solid var(--accent)',
+        'left':'none',
+      };
+      e.style.border=borders[v]; ed.style.border=borders[v];
+      if(v==='left') { e.style.borderLeft='3px solid var(--accent)'; ed.style.borderLeft='3px solid var(--accent)'; }
+      if(v==='accent-glow') { e.style.boxShadow='inset 0 0 20px rgba(167,251,144,0.05)'; ed.style.boxShadow='inset 0 0 20px rgba(167,251,144,0.05)'; }
+      document.getElementById('fx-label').textContent=v; document.getElementById('fx-label-d').textContent=v;
+      document.getElementById('fx-css-short').textContent='border: '+borders[v]; document.getElementById('fx-css-short-d').textContent='border: '+borders[v];
+      toast('Border: '+v);
+    }
+
+    function pickRadius(px,el) {
+      sel(document.getElementById('rad-opts'),el);
+      const v=px+'px'; const e=document.getElementById('fx-el'); const ed=document.getElementById('fx-el-dark');
+      e.style.borderRadius=v; ed.style.borderRadius=v;
+      document.getElementById('fx-css-short').textContent='border-radius: '+v; document.getElementById('fx-css-short-d').textContent='border-radius: '+v;
+      toast('Radius: '+v);
+    }
+    pickFx('subtle',document.querySelector('#fx-opts .opt'));
+  </script>
+</body>
+</html>

@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Hearst Typography</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --accent: #A7FB90;
+      --accent-light: #C4FDB5;
+      --accent-dark: #73DE56;
+      --hearst-black: #000000;
+      --hearst-900: #111111;
+      --hearst-800: #1a1a1a;
+      --hearst-700: #2a2a2a;
+      --hearst-600: #3a3a3a;
+      --hearst-500: #7F7F7F;
+      --hearst-400: #B2B2B2;
+      --hearst-300: #D4D4D4;
+      --hearst-200: #E8E8E8;
+      --hearst-100: #F2F2F2;
+      --hearst-50: #FCFDFC;
+      --hearst-white: #FFFFFF;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--hearst-100);
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding-bottom: 100px;
+    }
+
+    /* ═══ HEADER ═══ */
+    .header {
+      background: var(--hearst-black);
+      padding: 20px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+    }
+
+    .header p {
+      font-size: 12px;
+      color: var(--hearst-500);
+      margin-top: 4px;
+    }
+
+    /* ═══ SECTION TITLES ═══ */
+    .section-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--hearst-400);
+      padding: 16px 20px 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+
+    /* ═══ PRESETS HORIZONTAL SCROLL ═══ */
+    .presets-scroll {
+      display: flex;
+      gap: 12px;
+      padding: 0 20px 20px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .presets-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .preset-card {
+      flex-shrink: 0;
+      width: 200px;
+      background: var(--hearst-white);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      border: 3px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+      scroll-snap-align: start;
+    }
+
+    .preset-card:active {
+      transform: scale(0.97);
+    }
+
+    .preset-card.selected {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(167, 251, 144, 0.2);
+    }
+
+    .preset-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      color: var(--accent-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .preset-card h1 { margin-bottom: 6px; }
+    .preset-card h2 { margin-bottom: 4px; }
+
+    /* ═══ LIVE PREVIEW ═══ */
+    .preview-container {
+      padding: 0 20px;
+    }
+
+    .preview-card {
+      background: var(--hearst-white);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+
+    .preview-card.dark {
+      background: var(--hearst-black);
+    }
+
+    .preview-card .label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--hearst-400);
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--hearst-200);
+    }
+
+    .preview-card.dark .label {
+      color: var(--hearst-600);
+      border-bottom-color: var(--hearst-800);
+    }
+
+    .text-sample {
+      margin-bottom: 14px;
+    }
+
+    .text-sample:last-child {
+      margin-bottom: 0;
+    }
+
+    #preview-h1, #preview-h1-dark { transition: all 0.3s ease; }
+    #preview-h2, #preview-h2-dark { transition: all 0.3s ease; }
+    #preview-h3, #preview-h3-dark { transition: all 0.3s ease; }
+    #preview-body, #preview-body-dark { transition: all 0.3s ease; }
+
+    /* ═══ CURRENT STYLE INFO ═══ */
+    .style-info {
+      background: var(--hearst-900);
+      border-radius: 16px;
+      padding: 20px;
+      margin: 0 20px 20px;
+    }
+
+    .style-info h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .style-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .style-item {
+      background: var(--hearst-800);
+      border-radius: 10px;
+      padding: 12px;
+    }
+
+    .style-item .type {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 6px;
+    }
+
+    .style-item .value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--hearst-300);
+    }
+
+    .style-item .color-dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    /* ═══ COPY BUTTON ═══ */
+    .copy-section {
+      padding: 0 20px 40px;
+    }
+
+    .copy-btn {
+      width: 100%;
+      background: var(--accent);
+      color: var(--hearst-black);
+      border: none;
+      padding: 18px;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'Space Grotesk', sans-serif;
+      letter-spacing: 0.02em;
+    }
+
+    .copy-btn:active {
+      background: var(--accent-dark);
+      transform: scale(0.98);
+    }
+
+    /* ═══ HIDDEN EXPORT ═══ */
+    #export-code {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- HEADER -->
+  <header class="header">
+    <h1>HEARST TYPOGRAPHY</h1>
+    <p>Tap a style to preview instantly</p>
+  </header>
+
+  <!-- STYLE SELECTION -->
+  <div class="section-title">Select Style</div>
+  <div class="presets-scroll">
+    <!-- Editorial -->
+    <div class="preset-card selected" onclick="applyPreset('editorial', this)">
+      <div class="preset-name">Editorial</div>
+      <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; color: #000;">Sustainable</h1>
+      <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; color: #73DE56;">Mining</h2>
+      <p style="font-family: 'Inter', sans-serif; font-size: 11px; color: #7F7F7F; line-height: 1.4;">Clean & professional</p>
+    </div>
+
+    <!-- Bold -->
+    <div class="preset-card" onclick="applyPreset('bold', this)">
+      <div class="preset-name">Bold</div>
+      <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; color: #73DE56;">IMPACT</h1>
+      <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700; color: #000;">Revolution</h2>
+      <p style="font-family: 'Inter', sans-serif; font-size: 11px; color: #3a3a3a; line-height: 1.4; font-weight: 500;">Strong accent</p>
+    </div>
+
+    <!-- Minimal -->
+    <div class="preset-card" onclick="applyPreset('minimal', this)">
+      <div class="preset-name">Minimal</div>
+      <h1 style="font-family: 'Inter', sans-serif; font-size: 18px; font-weight: 500; color: #2a2a2a;">Sustainable</h1>
+      <h2 style="font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 400; color: #7F7F7F;">Mining</h2>
+      <p style="font-family: 'Inter', sans-serif; font-size: 11px; color: #B2B2B2; line-height: 1.5; font-weight: 300;">Light & subtle</p>
+    </div>
+
+    <!-- Tech -->
+    <div class="preset-card" onclick="applyPreset('tech', this)">
+      <div class="preset-name">Tech</div>
+      <h1 style="font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 600; color: #A7FB90;">HEARST_</h1>
+      <h2 style="font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; color: #000;">&gt; connect()</h2>
+      <p style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #7F7F7F; line-height: 1.5;">Monospace dev</p>
+    </div>
+
+    <!-- Luxury -->
+    <div class="preset-card" onclick="applyPreset('luxury', this)">
+      <div class="preset-name">Luxury</div>
+      <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 400; color: #000; letter-spacing: 0.08em;">HEARST</h1>
+      <h2 style="font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 300; color: #73DE56; letter-spacing: 0.15em; text-transform: uppercase;">Mining</h2>
+      <p style="font-family: 'Inter', sans-serif; font-size: 11px; color: #7F7F7F; line-height: 1.5; font-weight: 300;">Premium refined</p>
+    </div>
+
+    <!-- Contrast -->
+    <div class="preset-card" onclick="applyPreset('contrast', this)">
+      <div class="preset-name">Contrast</div>
+      <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700;"><span style="color: #73DE56;">We</span> <span style="color: #000;">Make</span></h1>
+      <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 600; color: #7F7F7F;">Sustainable</h2>
+      <p style="font-family: 'Inter', sans-serif; font-size: 11px; color: #3a3a3a; line-height: 1.4;">Dual-tone</p>
+    </div>
+  </div>
+
+  <!-- LIVE PREVIEW -->
+  <div class="section-title">Live Preview</div>
+  <div class="preview-container">
+    <!-- Light -->
+    <div class="preview-card">
+      <div class="label">Light Background</div>
+      <div class="text-sample"><h1 id="preview-h1">We Make Crypto Mining Sustainable</h1></div>
+      <div class="text-sample"><h2 id="preview-h2">Mining-as-a-Service for Institutions</h2></div>
+      <div class="text-sample"><h3 id="preview-h3">Core Capabilities & Infrastructure</h3></div>
+      <div class="text-sample"><p id="preview-body">Our mission is to create a cleaner, smarter world by integrating renewable energy and responsible innovation.</p></div>
+    </div>
+
+    <!-- Dark -->
+    <div class="preview-card dark">
+      <div class="label">Dark Background</div>
+      <div class="text-sample"><h1 id="preview-h1-dark">We Make Crypto Mining Sustainable</h1></div>
+      <div class="text-sample"><h2 id="preview-h2-dark">Mining-as-a-Service for Institutions</h2></div>
+      <div class="text-sample"><h3 id="preview-h3-dark">Core Capabilities & Infrastructure</h3></div>
+      <div class="text-sample"><p id="preview-body-dark">Our mission is to create a cleaner, smarter world by integrating renewable energy and responsible innovation.</p></div>
+    </div>
+  </div>
+
+  <!-- CURRENT STYLE INFO -->
+  <div class="section-title">Current Style</div>
+  <div class="style-info">
+    <h3 id="current-style-name">Editorial</h3>
+    <div class="style-grid">
+      <div class="style-item">
+        <div class="type">H1</div>
+        <div class="value" id="info-h1">Space Grotesk 32px</div>
+      </div>
+      <div class="style-item">
+        <div class="type">H2</div>
+        <div class="value" id="info-h2">Space Grotesk 20px</div>
+      </div>
+      <div class="style-item">
+        <div class="type">H3</div>
+        <div class="value" id="info-h3">Inter 16px</div>
+      </div>
+      <div class="style-item">
+        <div class="type">Body</div>
+        <div class="value" id="info-body">Inter 14px</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COPY CSS -->
+  <div class="copy-section">
+    <button class="copy-btn" onclick="copyCSS()">Copy CSS to Clipboard</button>
+  </div>
+
+  <pre id="export-code"></pre>
+
+  <script>
+    const colors = {
+      accent: '#A7FB90',
+      accentDark: '#73DE56',
+      black: '#000000',
+      hearst700: '#2a2a2a',
+      hearst500: '#7F7F7F',
+      hearst400: '#B2B2B2',
+      white: '#FFFFFF'
+    };
+
+    let currentPreset = 'editorial';
+    let currentConfig = {};
+
+    const presets = {
+      editorial: {
+        name: 'Editorial',
+        h1: { font: "'Space Grotesk', sans-serif", fontName: 'Space Grotesk', size: 32, weight: 700, color: colors.black },
+        h2: { font: "'Space Grotesk', sans-serif", fontName: 'Space Grotesk', size: 20, weight: 600, color: colors.accentDark },
+        h3: { font: "'Inter', sans-serif", fontName: 'Inter', size: 16, weight: 600, color: colors.black },
+        body: { font: "'Inter', sans-serif", fontName: 'Inter', size: 14, weight: 400, color: colors.hearst500 }
+      },
+      bold: {
+        name: 'Bold',
+        h1: { font: "'Space Grotesk', sans-serif", fontName: 'Space Grotesk', size: 36, weight: 700, color: colors.accentDark },
+        h2: { font: "'Space Grotesk', sans-serif", fontName: 'Space Grotesk', size: 22, weight: 700, color: colors.black },
+        h3: { font: "'Space Grotesk', sans-serif", fontName: 'Space Grotesk', size: 18, weight: 600, color: colors.hearst700 },
+        body: { font: "'Inter', sans-serif", fontName: 'Inter', size: 14, weight: 500, color: colors.hearst700 }
+      },
+      minimal: {
+        name: 'Minimal',
+        h1: { font: "'Inter', sans-serif", fontName: 'Inter', size: 28, weight: 500, color: colors.hearst700 },
+        h2: { font: "'Inter', sans-serif", fontName: 'Inter', size: 18, weight: 400, color: colors.hearst500 },
+        h3: { font: "'Inter', sans-serif", fontName: 'Inter', size: 14, weight: 500, color: colors.hearst500 },
+        body: { font: "'Inter', sans-serif", fontName: 'Inter', size: 13, weight: 300, color: colors.hearst400 }
+      },
+      tech: {
+        name: 'Tech',
+        h1: { font: "'JetBrains Mono', monospace", fontName: 'JetBrains Mono', size: 24, weight: 600, color: colors.accent },
+        h2: { font: "'JetBrains Mono', monospace", fontName: 'JetBrains Mono', size: 16, weight: 500, color: colors.black },
+        h3: { font: "'JetBrains Mono', monospace", fontName: 'JetBrains Mono', size: 13, weight: 500, color: colors.hearst500 },
+        body: { font: "'JetBrains Mono', monospace", fontName: 'JetBrains Mono', size: 12, weight: 400, color: colors.hearst500 }
+      },
+      luxury: {
+        name: 'Luxury',
+        h1: { font: "'Space Grotesk', sans-serif", fontName: 'Space Grotesk', size: 34, weight: 400, color: colors.black },
+        h2: { font: "'Inter', sans-serif", fontName: 'Inter', size: 16, weight: 300, color: colors.accentDark },
+        h3: { font: "'Inter', sans-serif", fontName: 'Inter', size: 13, weight: 500, color: colors.hearst500 },
+        body: { font: "'Inter', sans-serif", fontName: 'Inter', size: 13, weight: 300, color: colors.hearst500 }
+      },
+      contrast: {
+        name: 'Contrast',
+        h1: { font: "'Space Grotesk', sans-serif", fontName: 'Space Grotesk', size: 32, weight: 700, color: colors.accentDark },
+        h2: { font: "'Space Grotesk', sans-serif", fontName: 'Space Grotesk', size: 18, weight: 600, color: colors.hearst500 },
+        h3: { font: "'Inter', sans-serif", fontName: 'Inter', size: 16, weight: 600, color: colors.black },
+        body: { font: "'Inter', sans-serif", fontName: 'Inter', size: 14, weight: 400, color: colors.hearst700 }
+      }
+    };
+
+    function applyPreset(preset, card) {
+      // Update selection
+      document.querySelectorAll('.preset-card').forEach(c => c.classList.remove('selected'));
+      if (card) card.classList.add('selected');
+
+      currentPreset = preset;
+      currentConfig = presets[preset];
+
+      // Update preview
+      applyStyles('preview-h1', currentConfig.h1, false);
+      applyStyles('preview-h1-dark', currentConfig.h1, true);
+      applyStyles('preview-h2', currentConfig.h2, false);
+      applyStyles('preview-h2-dark', currentConfig.h2, true);
+      applyStyles('preview-h3', currentConfig.h3, false);
+      applyStyles('preview-h3-dark', currentConfig.h3, true);
+      applyStyles('preview-body', currentConfig.body, false);
+      applyStyles('preview-body-dark', currentConfig.body, true);
+
+      // Update info
+      document.getElementById('current-style-name').textContent = currentConfig.name;
+      document.getElementById('info-h1').innerHTML = `<span class="color-dot" style="background:${currentConfig.h1.color}"></span>${currentConfig.h1.fontName} ${currentConfig.h1.size}px`;
+      document.getElementById('info-h2').innerHTML = `<span class="color-dot" style="background:${currentConfig.h2.color}"></span>${currentConfig.h2.fontName} ${currentConfig.h2.size}px`;
+      document.getElementById('info-h3').innerHTML = `<span class="color-dot" style="background:${currentConfig.h3.color}"></span>${currentConfig.h3.fontName} ${currentConfig.h3.size}px`;
+      document.getElementById('info-body').innerHTML = `<span class="color-dot" style="background:${currentConfig.body.color}"></span>${currentConfig.body.fontName} ${currentConfig.body.size}px`;
+
+      updateExport();
+    }
+
+    function applyStyles(id, config, isDark) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.style.fontFamily = config.font;
+      el.style.fontSize = config.size + 'px';
+      el.style.fontWeight = config.weight;
+      
+      let color = config.color;
+      if (isDark) {
+        if (color === colors.black) color = colors.white;
+        else if (color === colors.hearst700) color = colors.hearst400;
+        else if (color === colors.hearst500) color = colors.hearst400;
+      }
+      el.style.color = color;
+      el.style.lineHeight = id.includes('body') ? '1.6' : '1.2';
+    }
+
+    function updateExport() {
+      const css = `/* Hearst Typography — ${currentConfig.name} */
+h1 {
+  font-family: ${currentConfig.h1.font};
+  font-size: ${currentConfig.h1.size}px;
+  font-weight: ${currentConfig.h1.weight};
+  color: ${currentConfig.h1.color};
+  line-height: 1.15;
+}
+
+h2 {
+  font-family: ${currentConfig.h2.font};
+  font-size: ${currentConfig.h2.size}px;
+  font-weight: ${currentConfig.h2.weight};
+  color: ${currentConfig.h2.color};
+  line-height: 1.25;
+}
+
+h3 {
+  font-family: ${currentConfig.h3.font};
+  font-size: ${currentConfig.h3.size}px;
+  font-weight: ${currentConfig.h3.weight};
+  color: ${currentConfig.h3.color};
+  line-height: 1.35;
+}
+
+p {
+  font-family: ${currentConfig.body.font};
+  font-size: ${currentConfig.body.size}px;
+  font-weight: ${currentConfig.body.weight};
+  color: ${currentConfig.body.color};
+  line-height: 1.6;
+}`;
+      document.getElementById('export-code').textContent = css;
+    }
+
+    function copyCSS() {
+      const code = document.getElementById('export-code').textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        const btn = document.querySelector('.copy-btn');
+        btn.textContent = '✓ Copied!';
+        btn.style.background = colors.accentDark;
+        setTimeout(() => {
+          btn.textContent = 'Copy CSS to Clipboard';
+          btn.style.background = colors.accent;
+        }, 2000);
+      });
+    }
+
+    // Init
+    applyPreset('editorial', document.querySelector('.preset-card.selected'));
+  </script>
+</body>
+</html>

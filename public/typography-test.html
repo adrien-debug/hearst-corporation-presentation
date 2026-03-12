@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hearst Typography Tester</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --accent: #A7FB90;
+      --accent-light: #C4FDB5;
+      --accent-dark: #73DE56;
+      --hearst-black: #000000;
+      --hearst-900: #111111;
+      --hearst-800: #1a1a1a;
+      --hearst-700: #2a2a2a;
+      --hearst-600: #3a3a3a;
+      --hearst-500: #7F7F7F;
+      --hearst-400: #B2B2B2;
+      --hearst-300: #D4D4D4;
+      --hearst-200: #E8E8E8;
+      --hearst-100: #F2F2F2;
+      --hearst-50: #FCFDFC;
+      --hearst-white: #FFFFFF;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--hearst-100);
+      min-height: 100vh;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      min-height: 100vh;
+    }
+
+    /* ═══ SIDEBAR ═══ */
+    .sidebar {
+      background: var(--hearst-white);
+      border-right: 1px solid var(--hearst-200);
+      padding: 24px;
+      overflow-y: auto;
+      max-height: 100vh;
+      position: sticky;
+      top: 0;
+    }
+
+    .sidebar h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--hearst-500);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--accent);
+    }
+
+    .control-group {
+      margin-bottom: 24px;
+    }
+
+    .control-group label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--hearst-600);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+
+    .control-group select,
+    .control-group input[type="text"],
+    .control-group input[type="number"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--hearst-200);
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      background: var(--hearst-50);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .control-group select:focus,
+    .control-group input:focus {
+      outline: none;
+      border-color: var(--accent-dark);
+      box-shadow: 0 0 0 3px rgba(167, 251, 144, 0.2);
+    }
+
+    .control-group input[type="range"] {
+      width: 100%;
+      margin-top: 4px;
+    }
+
+    .range-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent-dark);
+      font-weight: 600;
+    }
+
+    .color-swatches {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .color-swatch {
+      aspect-ratio: 1;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: transform 0.15s, border-color 0.15s;
+    }
+
+    .color-swatch:hover {
+      transform: scale(1.1);
+    }
+
+    .color-swatch.selected {
+      border-color: var(--hearst-black);
+    }
+
+    .preset-btn {
+      width: 100%;
+      padding: 10px 16px;
+      margin-bottom: 8px;
+      border: 1px solid var(--hearst-200);
+      border-radius: 8px;
+      background: var(--hearst-white);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s;
+    }
+
+    .preset-btn:hover {
+      background: var(--accent);
+      border-color: var(--accent-dark);
+    }
+
+    .preset-btn.active {
+      background: var(--accent);
+      border-color: var(--accent-dark);
+      font-weight: 600;
+    }
+
+    /* ═══ PREVIEW ═══ */
+    .preview {
+      padding: 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .preview-card {
+      background: var(--hearst-white);
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 4px 12px rgba(0,0,0,0.03);
+    }
+
+    .preview-card.dark {
+      background: var(--hearst-black);
+    }
+
+    .preview-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--hearst-400);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .preview-label::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+
+    .dark .preview-label {
+      color: var(--hearst-500);
+    }
+
+    #preview-h1,
+    #preview-h2,
+    #preview-h3,
+    #preview-body {
+      transition: all 0.3s ease;
+    }
+
+    .text-sample {
+      margin-bottom: 24px;
+    }
+
+    .text-sample:last-child {
+      margin-bottom: 0;
+    }
+
+    /* ═══ PROPOSALS GRID ═══ */
+    .proposals-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    .proposal-card {
+      background: var(--hearst-white);
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .proposal-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .proposal-card.selected {
+      border-color: var(--accent-dark);
+      box-shadow: 0 0 0 4px rgba(167, 251, 144, 0.2);
+    }
+
+    .proposal-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--accent-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 16px;
+    }
+
+    /* ═══ EXPORT SECTION ═══ */
+    .export-section {
+      background: var(--hearst-900);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 24px;
+    }
+
+    .export-section h3 {
+      color: var(--accent);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 12px;
+    }
+
+    .export-code {
+      background: var(--hearst-black);
+      border-radius: 8px;
+      padding: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--hearst-300);
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    .copy-btn {
+      background: var(--accent);
+      color: var(--hearst-black);
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 12px;
+      transition: background 0.2s;
+    }
+
+    .copy-btn:hover {
+      background: var(--accent-dark);
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- ═══ SIDEBAR CONTROLS ═══ -->
+    <aside class="sidebar">
+      <h2>Typography Tester</h2>
+
+      <!-- PRESETS -->
+      <div class="control-group">
+        <label>Presets</label>
+        <button class="preset-btn active" onclick="applyPreset('editorial')">Editorial — Clean</button>
+        <button class="preset-btn" onclick="applyPreset('bold')">Bold — Impact</button>
+        <button class="preset-btn" onclick="applyPreset('minimal')">Minimal — Light</button>
+        <button class="preset-btn" onclick="applyPreset('tech')">Tech — Monospace</button>
+      </div>
+
+      <!-- H1 CONTROLS -->
+      <div class="control-group">
+        <label>H1 — Headline</label>
+        <select id="h1-font" onchange="updateStyles()">
+          <option value="'Space Grotesk', sans-serif" selected>Space Grotesk</option>
+          <option value="'Inter', sans-serif">Inter</option>
+          <option value="'JetBrains Mono', monospace">JetBrains Mono</option>
+        </select>
+        <div style="display:flex; gap:8px; margin-top:8px;">
+          <div style="flex:1;">
+            <input type="number" id="h1-size" value="48" min="24" max="120" onchange="updateStyles()">
+          </div>
+          <div style="flex:1;">
+            <select id="h1-weight" onchange="updateStyles()">
+              <option value="400">Regular</option>
+              <option value="500">Medium</option>
+              <option value="600">SemiBold</option>
+              <option value="700" selected>Bold</option>
+            </select>
+          </div>
+        </div>
+        <label style="margin-top:12px;">Color</label>
+        <div class="color-swatches" id="h1-colors"></div>
+      </div>
+
+      <!-- H2 CONTROLS -->
+      <div class="control-group">
+        <label>H2 — Subheadline</label>
+        <select id="h2-font" onchange="updateStyles()">
+          <option value="'Space Grotesk', sans-serif" selected>Space Grotesk</option>
+          <option value="'Inter', sans-serif">Inter</option>
+          <option value="'JetBrains Mono', monospace">JetBrains Mono</option>
+        </select>
+        <div style="display:flex; gap:8px; margin-top:8px;">
+          <div style="flex:1;">
+            <input type="number" id="h2-size" value="32" min="18" max="72" onchange="updateStyles()">
+          </div>
+          <div style="flex:1;">
+            <select id="h2-weight" onchange="updateStyles()">
+              <option value="400">Regular</option>
+              <option value="500">Medium</option>
+              <option value="600" selected>SemiBold</option>
+              <option value="700">Bold</option>
+            </select>
+          </div>
+        </div>
+        <label style="margin-top:12px;">Color</label>
+        <div class="color-swatches" id="h2-colors"></div>
+      </div>
+
+      <!-- H3 CONTROLS -->
+      <div class="control-group">
+        <label>H3 — Section Title</label>
+        <select id="h3-font" onchange="updateStyles()">
+          <option value="'Space Grotesk', sans-serif">Space Grotesk</option>
+          <option value="'Inter', sans-serif" selected>Inter</option>
+          <option value="'JetBrains Mono', monospace">JetBrains Mono</option>
+        </select>
+        <div style="display:flex; gap:8px; margin-top:8px;">
+          <div style="flex:1;">
+            <input type="number" id="h3-size" value="20" min="14" max="48" onchange="updateStyles()">
+          </div>
+          <div style="flex:1;">
+            <select id="h3-weight" onchange="updateStyles()">
+              <option value="400">Regular</option>
+              <option value="500">Medium</option>
+              <option value="600" selected>SemiBold</option>
+              <option value="700">Bold</option>
+            </select>
+          </div>
+        </div>
+        <label style="margin-top:12px;">Color</label>
+        <div class="color-swatches" id="h3-colors"></div>
+      </div>
+
+      <!-- BODY CONTROLS -->
+      <div class="control-group">
+        <label>Body Text</label>
+        <select id="body-font" onchange="updateStyles()">
+          <option value="'Inter', sans-serif" selected>Inter</option>
+          <option value="'Space Grotesk', sans-serif">Space Grotesk</option>
+          <option value="'JetBrains Mono', monospace">JetBrains Mono</option>
+        </select>
+        <div style="display:flex; gap:8px; margin-top:8px;">
+          <div style="flex:1;">
+            <input type="number" id="body-size" value="16" min="12" max="24" onchange="updateStyles()">
+          </div>
+          <div style="flex:1;">
+            <select id="body-weight" onchange="updateStyles()">
+              <option value="300">Light</option>
+              <option value="400" selected>Regular</option>
+              <option value="500">Medium</option>
+            </select>
+          </div>
+        </div>
+        <label style="margin-top:12px;">Color</label>
+        <div class="color-swatches" id="body-colors"></div>
+      </div>
+
+      <!-- EXPORT -->
+      <div class="export-section">
+        <h3>Export CSS</h3>
+        <div class="export-code" id="export-code"></div>
+        <button class="copy-btn" onclick="copyCSS()">Copy CSS</button>
+      </div>
+    </aside>
+
+    <!-- ═══ PREVIEW AREA ═══ -->
+    <main class="preview">
+      <!-- LIVE PREVIEW -->
+      <div class="preview-card" id="preview-light">
+        <div class="preview-label">Light Background</div>
+        <div class="text-sample">
+          <h1 id="preview-h1">We Make Crypto Mining Sustainable</h1>
+        </div>
+        <div class="text-sample">
+          <h2 id="preview-h2">Mining-as-a-Service for Institutions</h2>
+        </div>
+        <div class="text-sample">
+          <h3 id="preview-h3">Core Capabilities & Infrastructure</h3>
+        </div>
+        <div class="text-sample">
+          <p id="preview-body">Our mission is to create a cleaner, smarter world by integrating renewable energy, responsible innovation, and game-changing technologies. We aim to build a strategic Bitcoin reserve that supports the growth of financial institutions.</p>
+        </div>
+      </div>
+
+      <!-- DARK PREVIEW -->
+      <div class="preview-card dark" id="preview-dark">
+        <div class="preview-label">Dark Background</div>
+        <div class="text-sample">
+          <h1 id="preview-h1-dark">We Make Crypto Mining Sustainable</h1>
+        </div>
+        <div class="text-sample">
+          <h2 id="preview-h2-dark">Mining-as-a-Service for Institutions</h2>
+        </div>
+        <div class="text-sample">
+          <h3 id="preview-h3-dark">Core Capabilities & Infrastructure</h3>
+        </div>
+        <div class="text-sample">
+          <p id="preview-body-dark">Our mission is to create a cleaner, smarter world by integrating renewable energy, responsible innovation, and game-changing technologies. We aim to build a strategic Bitcoin reserve that supports the growth of financial institutions.</p>
+        </div>
+      </div>
+
+      <!-- PROPOSALS -->
+      <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 24px; color: var(--hearst-600); margin-top: 16px;">Style Proposals</h2>
+      
+      <div class="proposals-grid">
+        <!-- Proposal 1: Editorial -->
+        <div class="proposal-card" onclick="applyPreset('editorial')">
+          <div class="proposal-name">Editorial — Clean</div>
+          <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 36px; font-weight: 700; color: #000; margin-bottom: 12px;">Sustainable Mining</h1>
+          <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 600; color: #73DE56; margin-bottom: 8px;">Institutional Grade</h2>
+          <p style="font-family: 'Inter', sans-serif; font-size: 14px; color: #7F7F7F; line-height: 1.6;">Clean typography for professional presentations with clear hierarchy.</p>
+        </div>
+
+        <!-- Proposal 2: Bold -->
+        <div class="proposal-card" onclick="applyPreset('bold')">
+          <div class="proposal-name">Bold — Impact</div>
+          <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 42px; font-weight: 700; color: #73DE56; margin-bottom: 12px;">SUSTAINABLE</h1>
+          <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; color: #000; margin-bottom: 8px;">Mining Revolution</h2>
+          <p style="font-family: 'Inter', sans-serif; font-size: 15px; color: #3a3a3a; line-height: 1.6; font-weight: 500;">High-impact typography with strong accent colors.</p>
+        </div>
+
+        <!-- Proposal 3: Minimal -->
+        <div class="proposal-card" onclick="applyPreset('minimal')">
+          <div class="proposal-name">Minimal — Light</div>
+          <h1 style="font-family: 'Inter', sans-serif; font-size: 32px; font-weight: 500; color: #2a2a2a; margin-bottom: 12px;">Sustainable Mining</h1>
+          <h2 style="font-family: 'Inter', sans-serif; font-size: 20px; font-weight: 400; color: #7F7F7F; margin-bottom: 8px;">Institutional Solutions</h2>
+          <p style="font-family: 'Inter', sans-serif; font-size: 14px; color: #B2B2B2; line-height: 1.7; font-weight: 300;">Subtle, elegant typography with generous whitespace.</p>
+        </div>
+
+        <!-- Proposal 4: Tech -->
+        <div class="proposal-card" onclick="applyPreset('tech')">
+          <div class="proposal-name">Tech — Monospace</div>
+          <h1 style="font-family: 'JetBrains Mono', monospace; font-size: 28px; font-weight: 600; color: #A7FB90; margin-bottom: 12px;">HEARST_MINING</h1>
+          <h2 style="font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 500; color: #000; margin-bottom: 8px;">&gt; institutional.connect()</h2>
+          <p style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #7F7F7F; line-height: 1.8;">Technical aesthetic for developer-focused content.</p>
+        </div>
+
+        <!-- Proposal 5: Luxury -->
+        <div class="proposal-card" onclick="applyPreset('luxury')">
+          <div class="proposal-name">Luxury — Premium</div>
+          <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 40px; font-weight: 400; color: #000; margin-bottom: 12px; letter-spacing: 0.05em;">HEARST</h1>
+          <h2 style="font-family: 'Inter', sans-serif; font-size: 18px; font-weight: 300; color: #73DE56; margin-bottom: 8px; letter-spacing: 0.15em; text-transform: uppercase;">Sustainable Mining</h2>
+          <p style="font-family: 'Inter', sans-serif; font-size: 14px; color: #7F7F7F; line-height: 1.8; font-weight: 300;">Refined typography with generous letter-spacing.</p>
+        </div>
+
+        <!-- Proposal 6: Contrast -->
+        <div class="proposal-card" onclick="applyPreset('contrast')">
+          <div class="proposal-name">Contrast — Split</div>
+          <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 36px; font-weight: 700; margin-bottom: 12px;"><span style="color: #73DE56;">We Make</span> <span style="color: #000;">Mining</span></h1>
+          <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 600; color: #7F7F7F; margin-bottom: 8px;">More Sustainable</h2>
+          <p style="font-family: 'Inter', sans-serif; font-size: 14px; color: #3a3a3a; line-height: 1.6;">Dual-tone headlines with accent highlighting.</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // ═══ COLOR PALETTE ═══
+    const colors = {
+      accent: '#A7FB90',
+      accentLight: '#C4FDB5',
+      accentDark: '#73DE56',
+      black: '#000000',
+      hearst900: '#111111',
+      hearst800: '#1a1a1a',
+      hearst700: '#2a2a2a',
+      hearst600: '#3a3a3a',
+      hearst500: '#7F7F7F',
+      hearst400: '#B2B2B2',
+      hearst300: '#D4D4D4',
+      hearst200: '#E8E8E8',
+      hearst100: '#F2F2F2',
+      white: '#FFFFFF'
+    };
+
+    // ═══ STATE ═══
+    const state = {
+      h1: { color: colors.black },
+      h2: { color: colors.accentDark },
+      h3: { color: colors.black },
+      body: { color: colors.hearst500 }
+    };
+
+    // ═══ INIT COLOR SWATCHES ═══
+    function initSwatches() {
+      const swatchColors = [
+        colors.black, colors.hearst700, colors.hearst500, colors.hearst400,
+        colors.accentDark, colors.accent, colors.accentLight, colors.white
+      ];
+
+      ['h1', 'h2', 'h3', 'body'].forEach(type => {
+        const container = document.getElementById(`${type}-colors`);
+        container.innerHTML = '';
+        swatchColors.forEach(color => {
+          const swatch = document.createElement('div');
+          swatch.className = 'color-swatch' + (state[type].color === color ? ' selected' : '');
+          swatch.style.background = color;
+          swatch.style.border = color === colors.white ? '1px solid #E8E8E8' : 'none';
+          swatch.onclick = () => {
+            state[type].color = color;
+            initSwatches();
+            updateStyles();
+          };
+          container.appendChild(swatch);
+        });
+      });
+    }
+
+    // ═══ UPDATE STYLES ═══
+    function updateStyles() {
+      // H1
+      const h1Font = document.getElementById('h1-font').value;
+      const h1Size = document.getElementById('h1-size').value;
+      const h1Weight = document.getElementById('h1-weight').value;
+      
+      document.getElementById('preview-h1').style.fontFamily = h1Font;
+      document.getElementById('preview-h1').style.fontSize = h1Size + 'px';
+      document.getElementById('preview-h1').style.fontWeight = h1Weight;
+      document.getElementById('preview-h1').style.color = state.h1.color;
+      document.getElementById('preview-h1').style.lineHeight = '1.1';
+
+      document.getElementById('preview-h1-dark').style.fontFamily = h1Font;
+      document.getElementById('preview-h1-dark').style.fontSize = h1Size + 'px';
+      document.getElementById('preview-h1-dark').style.fontWeight = h1Weight;
+      document.getElementById('preview-h1-dark').style.color = state.h1.color === colors.black ? colors.white : state.h1.color;
+      document.getElementById('preview-h1-dark').style.lineHeight = '1.1';
+
+      // H2
+      const h2Font = document.getElementById('h2-font').value;
+      const h2Size = document.getElementById('h2-size').value;
+      const h2Weight = document.getElementById('h2-weight').value;
+      
+      document.getElementById('preview-h2').style.fontFamily = h2Font;
+      document.getElementById('preview-h2').style.fontSize = h2Size + 'px';
+      document.getElementById('preview-h2').style.fontWeight = h2Weight;
+      document.getElementById('preview-h2').style.color = state.h2.color;
+      document.getElementById('preview-h2').style.lineHeight = '1.2';
+
+      document.getElementById('preview-h2-dark').style.fontFamily = h2Font;
+      document.getElementById('preview-h2-dark').style.fontSize = h2Size + 'px';
+      document.getElementById('preview-h2-dark').style.fontWeight = h2Weight;
+      document.getElementById('preview-h2-dark').style.color = state.h2.color === colors.black ? colors.white : state.h2.color;
+      document.getElementById('preview-h2-dark').style.lineHeight = '1.2';
+
+      // H3
+      const h3Font = document.getElementById('h3-font').value;
+      const h3Size = document.getElementById('h3-size').value;
+      const h3Weight = document.getElementById('h3-weight').value;
+      
+      document.getElementById('preview-h3').style.fontFamily = h3Font;
+      document.getElementById('preview-h3').style.fontSize = h3Size + 'px';
+      document.getElementById('preview-h3').style.fontWeight = h3Weight;
+      document.getElementById('preview-h3').style.color = state.h3.color;
+      document.getElementById('preview-h3').style.lineHeight = '1.3';
+
+      document.getElementById('preview-h3-dark').style.fontFamily = h3Font;
+      document.getElementById('preview-h3-dark').style.fontSize = h3Size + 'px';
+      document.getElementById('preview-h3-dark').style.fontWeight = h3Weight;
+      document.getElementById('preview-h3-dark').style.color = state.h3.color === colors.black ? colors.white : state.h3.color;
+      document.getElementById('preview-h3-dark').style.lineHeight = '1.3';
+
+      // Body
+      const bodyFont = document.getElementById('body-font').value;
+      const bodySize = document.getElementById('body-size').value;
+      const bodyWeight = document.getElementById('body-weight').value;
+      
+      document.getElementById('preview-body').style.fontFamily = bodyFont;
+      document.getElementById('preview-body').style.fontSize = bodySize + 'px';
+      document.getElementById('preview-body').style.fontWeight = bodyWeight;
+      document.getElementById('preview-body').style.color = state.body.color;
+      document.getElementById('preview-body').style.lineHeight = '1.7';
+
+      document.getElementById('preview-body-dark').style.fontFamily = bodyFont;
+      document.getElementById('preview-body-dark').style.fontSize = bodySize + 'px';
+      document.getElementById('preview-body-dark').style.fontWeight = bodyWeight;
+      document.getElementById('preview-body-dark').style.color = state.body.color === colors.hearst500 ? colors.hearst400 : state.body.color;
+      document.getElementById('preview-body-dark').style.lineHeight = '1.7';
+
+      updateExport();
+    }
+
+    // ═══ PRESETS ═══
+    function applyPreset(preset) {
+      // Reset all active states
+      document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.proposal-card').forEach(card => card.classList.remove('selected'));
+      
+      // Find and activate the clicked element
+      const clickedBtn = document.querySelector(`.preset-btn[onclick*="'${preset}'"]`);
+      const clickedCard = document.querySelector(`.proposal-card[onclick*="'${preset}'"]`);
+      if (clickedBtn) clickedBtn.classList.add('active');
+      if (clickedCard) clickedCard.classList.add('selected');
+
+      const presets = {
+        editorial: {
+          h1: { font: "'Space Grotesk', sans-serif", size: 48, weight: 700, color: colors.black },
+          h2: { font: "'Space Grotesk', sans-serif", size: 32, weight: 600, color: colors.accentDark },
+          h3: { font: "'Inter', sans-serif", size: 20, weight: 600, color: colors.black },
+          body: { font: "'Inter', sans-serif", size: 16, weight: 400, color: colors.hearst500 }
+        },
+        bold: {
+          h1: { font: "'Space Grotesk', sans-serif", size: 56, weight: 700, color: colors.accentDark },
+          h2: { font: "'Space Grotesk', sans-serif", size: 36, weight: 700, color: colors.black },
+          h3: { font: "'Space Grotesk', sans-serif", size: 24, weight: 600, color: colors.hearst700 },
+          body: { font: "'Inter', sans-serif", size: 17, weight: 500, color: colors.hearst600 }
+        },
+        minimal: {
+          h1: { font: "'Inter', sans-serif", size: 40, weight: 500, color: colors.hearst700 },
+          h2: { font: "'Inter', sans-serif", size: 26, weight: 400, color: colors.hearst500 },
+          h3: { font: "'Inter', sans-serif", size: 18, weight: 500, color: colors.hearst600 },
+          body: { font: "'Inter', sans-serif", size: 15, weight: 300, color: colors.hearst400 }
+        },
+        tech: {
+          h1: { font: "'JetBrains Mono', monospace", size: 36, weight: 600, color: colors.accent },
+          h2: { font: "'JetBrains Mono', monospace", size: 24, weight: 500, color: colors.black },
+          h3: { font: "'JetBrains Mono', monospace", size: 16, weight: 500, color: colors.hearst600 },
+          body: { font: "'JetBrains Mono', monospace", size: 14, weight: 400, color: colors.hearst500 }
+        },
+        luxury: {
+          h1: { font: "'Space Grotesk', sans-serif", size: 52, weight: 400, color: colors.black },
+          h2: { font: "'Inter', sans-serif", size: 22, weight: 300, color: colors.accentDark },
+          h3: { font: "'Inter', sans-serif", size: 16, weight: 500, color: colors.hearst500 },
+          body: { font: "'Inter', sans-serif", size: 15, weight: 300, color: colors.hearst500 }
+        },
+        contrast: {
+          h1: { font: "'Space Grotesk', sans-serif", size: 48, weight: 700, color: colors.accentDark },
+          h2: { font: "'Space Grotesk', sans-serif", size: 28, weight: 600, color: colors.hearst500 },
+          h3: { font: "'Inter', sans-serif", size: 20, weight: 600, color: colors.black },
+          body: { font: "'Inter', sans-serif", size: 16, weight: 400, color: colors.hearst600 }
+        }
+      };
+
+      const p = presets[preset];
+      if (!p) return;
+
+      // Apply to form
+      document.getElementById('h1-font').value = p.h1.font;
+      document.getElementById('h1-size').value = p.h1.size;
+      document.getElementById('h1-weight').value = p.h1.weight;
+      state.h1.color = p.h1.color;
+
+      document.getElementById('h2-font').value = p.h2.font;
+      document.getElementById('h2-size').value = p.h2.size;
+      document.getElementById('h2-weight').value = p.h2.weight;
+      state.h2.color = p.h2.color;
+
+      document.getElementById('h3-font').value = p.h3.font;
+      document.getElementById('h3-size').value = p.h3.size;
+      document.getElementById('h3-weight').value = p.h3.weight;
+      state.h3.color = p.h3.color;
+
+      document.getElementById('body-font').value = p.body.font;
+      document.getElementById('body-size').value = p.body.size;
+      document.getElementById('body-weight').value = p.body.weight;
+      state.body.color = p.body.color;
+
+      initSwatches();
+      updateStyles();
+    }
+
+    // ═══ EXPORT CSS ═══
+    function updateExport() {
+      const css = `/* Hearst Typography */
+h1 {
+  font-family: ${document.getElementById('h1-font').value};
+  font-size: ${document.getElementById('h1-size').value}px;
+  font-weight: ${document.getElementById('h1-weight').value};
+  color: ${state.h1.color};
+  line-height: 1.1;
+}
+
+h2 {
+  font-family: ${document.getElementById('h2-font').value};
+  font-size: ${document.getElementById('h2-size').value}px;
+  font-weight: ${document.getElementById('h2-weight').value};
+  color: ${state.h2.color};
+  line-height: 1.2;
+}
+
+h3 {
+  font-family: ${document.getElementById('h3-font').value};
+  font-size: ${document.getElementById('h3-size').value}px;
+  font-weight: ${document.getElementById('h3-weight').value};
+  color: ${state.h3.color};
+  line-height: 1.3;
+}
+
+p {
+  font-family: ${document.getElementById('body-font').value};
+  font-size: ${document.getElementById('body-size').value}px;
+  font-weight: ${document.getElementById('body-weight').value};
+  color: ${state.body.color};
+  line-height: 1.7;
+}`;
+      document.getElementById('export-code').textContent = css;
+    }
+
+    function copyCSS() {
+      navigator.clipboard.writeText(document.getElementById('export-code').textContent);
+      event.target.textContent = 'Copied!';
+      setTimeout(() => { event.target.textContent = 'Copy CSS'; }, 2000);
+    }
+
+    // ═══ INIT ═══
+    initSwatches();
+    updateStyles();
+  </script>
+</body>
+</html>
